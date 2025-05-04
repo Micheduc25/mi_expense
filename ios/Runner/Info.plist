@@ -45,5 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- Permissions for voice commands and image capture -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mi Expense needs microphone access to process voice commands for adding transactions.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Mi Expense needs camera access to capture receipt images for your transactions.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Mi Expense needs photo library access to select receipt images for your transactions.</string>
 </dict>
 </plist>

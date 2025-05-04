@@ -1,8 +1,34 @@
 import 'package:flutter/material.dart';
-import 'utils/currency_utils.dart';
+import 'package:get/get.dart';
+import 'routes/app_routes.dart';
+import 'utils/theme_config.dart';
+import 'services/database_service.dart';
+import 'controllers/transaction_controller.dart';
+import 'controllers/category_controller.dart';
+import 'controllers/budget_controller.dart';
+import 'voice/voice_bindings.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize services
+  await initServices();
+
   runApp(const MyApp());
+}
+
+Future<void> initServices() async {
+  // Register services using GetX dependency injection
+  Get.put(DatabaseService());
+
+  // Register controllers
+  Get.put(CategoryController());
+  Get.put(TransactionController());
+  Get.put(BudgetController());
+
+  // Initialize voice services
+  final voiceBindings = VoiceBindings();
+  voiceBindings.dependencies();
 }
 
 class MyApp extends StatelessWidget {
@@ -10,62 +36,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Mi Expense',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Mi Expense - Track Your Spending'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  double _amount = 0;
-
-  void _updateAmount(double newAmount) {
-    setState(() {
-      _amount = newAmount;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Current Balance:',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              CurrencyUtils.formatCurrency(_amount),
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _updateAmount(_amount + 1000),
-        tooltip: 'Add amount',
-        child: const Icon(Icons.add),
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeConfig.lightTheme,
+      darkTheme: ThemeConfig.darkTheme,
+      themeMode: ThemeMode.system,
+      initialRoute: AppRoutes.home,
+      getPages: AppRoutes.routes,
+      defaultTransition: Transition.fade,
     );
   }
 }
